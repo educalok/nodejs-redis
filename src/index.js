@@ -58,8 +58,12 @@ async function getRedis (req, res, next) {
 
 async function main () {
   await client.connect()
-  app.listen(3000)
-  console.log('server listen on port 3000')
+  const PORT = process.env.PORT || 4000
+
+  // app.listen on express server
+  app.listen({ port: PORT }, () => {
+    console.log('App is listening on http://localhost:4000')
+  })
 }
 
 main()
