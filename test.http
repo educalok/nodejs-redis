@@ -1,5 +1,5 @@
 ### Get all chracters
-GET http://localhost:3000/character
+GET http://localhost:4000/character
 
 ###
-GET http://localhost:3000/character/12
+GET http://localhost:4000/character/12

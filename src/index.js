@@ -16,6 +16,7 @@ const client = createClient({
 })
 
 app.use(responseTime())
+app.use(limitRate)
 
 // Get all characters
 app.get('/character', getRedis)
@@ -54,6 +55,22 @@ async function getRedis (req, res, next) {
     console.log(error)
     res.send(error.message)
   }
+}
+
+async function limitRate (req, res, next) {
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
+  const requests = await client.incr(ip)
+  console.log(`Number of requests made so far ${requests}`)
+  if (requests === 1) {
+    await client.expire(ip, 43200)
+  }
+  if (requests > 50) {
+    res.status(503).json({
+      response: 'Error',
+      callsMade: requests,
+      msg: 'Too many calls made. Please try again later.'
+    })
+  } else next()
 }
 
 async function main () {
